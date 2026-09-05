@@ -1,0 +1,59 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: drop
+      POSTGRES_USER: drop
+      POSTGRES_PASSWORD: drop
+    ports:
+      - "5432:5432"
+    volumes:
+      - drop_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U drop -d drop"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      DROP_ENV: local
+      POSTGRES_HOST: db
+      LOCAL_STORAGE_ROOT: /data/uploads
+      ALLOWED_HOSTS: "*"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - drop_uploads:/data/uploads
+      - ./apps/api:/app/apps/api
+    command: >
+      sh -c "uv sync --all-extras &&
+             uv run python manage.py migrate --noinput &&
+             uv run python manage.py seed_data &&
+             uv run python manage.py runserver 0.0.0.0:8000"
+
+  web:
+    build:
+      context: apps/web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      API_URL: http://api:8000
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    depends_on:
+      - api
+    profiles:
+      - full
+
+volumes:
+  drop_pg:
+  drop_uploads:
