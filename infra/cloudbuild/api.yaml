@@ -18,10 +18,10 @@ substitutions:
   _ALLOWED_HOSTS: "*"
   _GOOGLE_OAUTH_CLIENT_ID: ""
   _EMAIL_FROM: "onboarding@resend.dev"
-  _LLM_OVERVIEW: openai:gpt-4o-mini
-  _LLM_INSIGHTS: openai:gpt-4o-mini
-  _LLM_CHAT: openai:gpt-4o-mini
-  _LLM_CHARTS: openai:gpt-4o-mini
+  _LLM_OVERVIEW: openai:gpt-5.6-luna
+  _LLM_INSIGHTS: openai:gpt-5.6-luna
+  _LLM_CHAT: openai:gpt-5.6-luna
+  _LLM_CHARTS: openai:gpt-5.6-luna
   _CLOUD_TASKS_QUEUE: drop-jobs
   _SCHEDULER_CRON_RENEW: "0 3 1 * *"
   _SCHEDULER_CRON_CLEANUP: "0 4 * * *"
