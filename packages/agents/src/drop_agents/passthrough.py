@@ -10,9 +10,18 @@ from drop_agents.protocol import AgentContext, AgentResult
 class PassthroughLLMRunner:
     """Minimal runner: packs summary/tools context and calls LLM once. ADK replaces later."""
 
-    def __init__(self, llm: LLMClient, *, use: str = "chat"):
+    def __init__(
+        self,
+        llm: LLMClient,
+        *,
+        use: str = "chat",
+        system_extra: str = "",
+        response_format: dict | None = None,
+    ):
         self.llm = llm
         self.use = use
+        self.system_extra = system_extra
+        self.response_format = response_format
 
     def run(self, ctx: AgentContext) -> AgentResult:
         system_bits = [
@@ -28,13 +37,18 @@ class PassthroughLLMRunner:
             system_bits.append(
                 "Stats:\n" + json.dumps(ctx.tools.stats(), ensure_ascii=False)[:4000]
             )
+        if self.system_extra:
+            system_bits.append(self.system_extra)
 
         messages: list[Message] = [{"role": "system", "content": "\n\n".join(system_bits)}]
         messages.extend(ctx.messages)
         if ctx.goal and (not ctx.messages or ctx.messages[-1].get("content") != ctx.goal):
             messages.append({"role": "user", "content": ctx.goal})
 
-        result = self.llm.complete({"use": self.use, "messages": messages})  # type: ignore[arg-type]
+        request: dict = {"use": self.use, "messages": messages}
+        if self.response_format:
+            request["response_format"] = self.response_format
+        result = self.llm.complete(request)  # type: ignore[arg-type]
         return AgentResult(
             content=result["content"],
             meta={

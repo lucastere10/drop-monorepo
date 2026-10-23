@@ -1,7 +1,11 @@
 # Drop API — Cloud Build (deploy to Cloud Run)
 #
-# Non-secret config: substitutions (override in trigger).
+# Non-secret config: substitutions (override in the trigger).
+# Defaults below are PLACEHOLDERS (example.com), not real hosts.
+#   develop → hml:  _DROP_ENV=hml  + real _WEB_BASE_URL / _API_BASE_URL
+#   main    → prod: _DROP_ENV=prod + real URLs
 # Secrets: Secret Manager names drop-* mounted at deploy.
+# Scheduler jobs are created by hand (see docs/runbooks/deploy.md).
 
 substitutions:
   _REGION: us-central1
@@ -11,12 +15,16 @@ substitutions:
   _DROP_ENV: prod
   _WEB_BASE_URL: "https://drop.example.com"
   _API_BASE_URL: "https://api.drop.example.com"
+  _ALLOWED_HOSTS: "*"
+  _GOOGLE_OAUTH_CLIENT_ID: ""
+  _EMAIL_FROM: "onboarding@resend.dev"
   _LLM_OVERVIEW: openai:gpt-4o-mini
   _LLM_INSIGHTS: openai:gpt-4o-mini
   _LLM_CHAT: openai:gpt-4o-mini
   _LLM_CHARTS: openai:gpt-4o-mini
   _CLOUD_TASKS_QUEUE: drop-jobs
   _SCHEDULER_CRON_RENEW: "0 3 1 * *"
+  _SCHEDULER_CRON_CLEANUP: "0 4 * * *"
   _SCHEDULER_TZ: America/Sao_Paulo
 
 options:
@@ -77,7 +85,7 @@ steps:
       - -c
       - |
         set -euo pipefail
-        cd /app/apps/api
+        cd /workspace/apps/api
         export DROP_ENV=${_DROP_ENV}
         uv run python manage.py migrate --noinput
         uv run python manage.py seed_data
@@ -96,5 +104,5 @@ steps:
           --region=${_REGION} \
           --service-account=${_API_SA}@${PROJECT_ID}.iam.gserviceaccount.com \
           --allow-unauthenticated \
-          --set-env-vars=DROP_ENV=${_DROP_ENV},WEB_BASE_URL=${_WEB_BASE_URL},API_BASE_URL=${_API_BASE_URL},GCP_PROJECT=${PROJECT_ID},GCP_LOCATION=${_REGION},CLOUD_TASKS_QUEUE=${_CLOUD_TASKS_QUEUE},LLM_OVERVIEW=${_LLM_OVERVIEW},LLM_INSIGHTS=${_LLM_INSIGHTS},LLM_CHAT=${_LLM_CHAT},LLM_CHARTS=${_LLM_CHARTS} \
+          --set-env-vars="DROP_ENV=${_DROP_ENV},WEB_BASE_URL=${_WEB_BASE_URL},API_BASE_URL=${_API_BASE_URL},ALLOWED_HOSTS=${_ALLOWED_HOSTS},GOOGLE_OAUTH_CLIENT_ID=${_GOOGLE_OAUTH_CLIENT_ID},EMAIL_FROM=${_EMAIL_FROM},GCP_PROJECT=${PROJECT_ID},GCP_LOCATION=${_REGION},CLOUD_TASKS_QUEUE=${_CLOUD_TASKS_QUEUE},LLM_OVERVIEW=${_LLM_OVERVIEW},LLM_INSIGHTS=${_LLM_INSIGHTS},LLM_CHAT=${_LLM_CHAT},LLM_CHARTS=${_LLM_CHARTS}" \
           --set-secrets=DATABASE_URL=drop-database-secret:latest,DJANGO_SECRET_KEY=drop-django-secret-key:latest,RESEND_API_KEY=drop-resend-key:latest,OPENAI_API_KEY=drop-openai-api-key:latest,GEMINI_API_KEY=drop-gemini-api-key:latest,GOOGLE_OAUTH_CLIENT_SECRET=drop-google-oauth-client-secret:latest,INTERNAL_WORKER_TOKEN=drop-internal-worker-token:latest

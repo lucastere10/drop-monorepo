@@ -1,4 +1,8 @@
 # Drop Web — Cloud Build (deploy to Cloud Run)
+#
+# Substitutions below are PLACEHOLDERS (example.com), not real hosts.
+# Override _API_BASE_URL / _NEXT_PUBLIC_API_URL in the trigger
+# (develop → hml, main → prod). API_URL is the server-side BFF target.
 
 substitutions:
   _REGION: us-central1
