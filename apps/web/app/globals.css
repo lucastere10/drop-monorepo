@@ -1,0 +1,178 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+    --font-heading: var(--font-bebas);
+    --font-sans: var(--font-sans);
+    --font-mono: var(--font-mono);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+}
+
+:root {
+    /* Mist — soft warm paper, not pure white */
+    --background: oklch(0.945 0.004 85);
+    --foreground: oklch(0.22 0.01 85);
+    --card: oklch(0.96 0.003 85);
+    --card-foreground: oklch(0.22 0.01 85);
+    --popover: oklch(0.96 0.003 85);
+    --popover-foreground: oklch(0.22 0.01 85);
+    --primary: oklch(0.24 0.01 85);
+    --primary-foreground: oklch(0.96 0.003 85);
+    --secondary: oklch(0.91 0.005 85);
+    --secondary-foreground: oklch(0.24 0.01 85);
+    --muted: oklch(0.91 0.005 85);
+    --muted-foreground: oklch(0.42 0.01 85);
+    --accent: oklch(0.9 0.006 85);
+    --accent-foreground: oklch(0.24 0.01 85);
+    --destructive: oklch(0.48 0.08 25);
+    --border: oklch(0.86 0.008 85);
+    --input: oklch(0.86 0.008 85);
+    --ring: oklch(0.5 0.01 85);
+    --chart-1: oklch(0.58 0.12 45);
+    --chart-2: oklch(0.48 0.08 220);
+    --chart-3: oklch(0.52 0.09 155);
+    --chart-4: oklch(0.64 0.11 85);
+    --chart-5: oklch(0.5 0.1 15);
+    --radius: 0.15rem;
+}
+
+.dark {
+    /* Ink — soft charcoal, not pure black */
+    --background: oklch(0.24 0.008 260);
+    --foreground: oklch(0.93 0.005 85);
+    --card: oklch(0.27 0.008 260);
+    --card-foreground: oklch(0.93 0.005 85);
+    --popover: oklch(0.27 0.008 260);
+    --popover-foreground: oklch(0.93 0.005 85);
+    --primary: oklch(0.92 0.005 85);
+    --primary-foreground: oklch(0.22 0.008 260);
+    --secondary: oklch(0.3 0.008 260);
+    --secondary-foreground: oklch(0.92 0.005 85);
+    --muted: oklch(0.3 0.008 260);
+    --muted-foreground: oklch(0.72 0.01 85);
+    --accent: oklch(0.32 0.008 260);
+    --accent-foreground: oklch(0.93 0.005 85);
+    --destructive: oklch(0.65 0.1 25);
+    --border: oklch(0.36 0.01 260);
+    --input: oklch(0.36 0.01 260);
+    --ring: oklch(0.65 0.01 85);
+    --chart-1: oklch(0.74 0.11 45);
+    --chart-2: oklch(0.72 0.07 220);
+    --chart-3: oklch(0.74 0.08 155);
+    --chart-4: oklch(0.8 0.1 85);
+    --chart-5: oklch(0.72 0.09 15);
+    --radius: 0.15rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  button:not(:disabled), [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+@layer utilities {
+  .font-bebas {
+    font-family: var(--font-bebas), sans-serif;
+  }
+  .animate-fade-up {
+    animation: fade-up 0.7s ease-out both;
+  }
+  .animate-drop-pulse {
+    animation: drop-pulse 1.6s ease-in-out infinite;
+  }
+  .animate-credit-pulse {
+    animation: credit-pulse 1.6s ease-in-out infinite;
+  }
+  .animate-stream-blink {
+    animation: stream-blink 1s step-end infinite;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-credit-pulse {
+    animation: none;
+  }
+}
+
+@keyframes credit-pulse {
+  0%,
+  100% {
+    box-shadow: inset 3px 0 0 0 color-mix(in oklch, var(--foreground) 18%, transparent);
+  }
+  50% {
+    box-shadow: inset 3px 0 0 0 var(--foreground);
+  }
+}
+
+@keyframes drop-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--foreground) 20%, transparent);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 0 6px color-mix(in oklch, var(--foreground) 0%, transparent);
+  }
+}
+
+.drop-dashboard .react-grid-item.react-grid-placeholder {
+  background: var(--foreground);
+  opacity: 0.08;
+}
+
+.drop-dashboard .react-grid-item > .react-resizable-handle::after {
+  border-color: var(--muted-foreground);
+}
+
+@keyframes stream-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
