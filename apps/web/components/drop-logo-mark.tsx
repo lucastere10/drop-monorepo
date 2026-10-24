@@ -69,11 +69,11 @@ export function DropLogoMark({
   const isRevealing = phase === "reveal" || isDone
   const isGlowing = phase === "glow"
 
-  let droAnimate: Record<string, unknown> = {}
+  let droAnimate: { opacity?: number; x?: number } = {}
   if (isRevealing) droAnimate = { opacity: 1, x: 0 }
   else if (shouldAnimate) droAnimate = { opacity: 0, x: 10 }
 
-  let pAnimate: Record<string, unknown> = {}
+  let pAnimate: { opacity?: number; x?: number } = {}
   if (isRevealing) pAnimate = { opacity: 1, x: 0 }
   else if (shouldAnimate) pAnimate = { opacity: 0, x: -10 }
 

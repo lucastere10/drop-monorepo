@@ -99,11 +99,12 @@ export function DashboardWatchProvider({ children }: { children: React.ReactNode
 
   useEffect(() => {
     if (!ready || !watch) return
+    const current = watch
     let stop = false
 
     async function tick() {
       try {
-        const res = await fetch(`/api/jobs/${watch.jobId}`)
+        const res = await fetch(`/api/jobs/${current.jobId}`)
         if (!res.ok || stop) return
         const data = await res.json()
         if (data.status !== "succeeded" && data.status !== "failed") return
@@ -111,8 +112,8 @@ export function DashboardWatchProvider({ children }: { children: React.ReactNode
         writeWatch(null)
         setWatch(null)
         const done: DashboardDone = {
-          analysisId: watch.analysisId,
-          jobId: watch.jobId,
+          analysisId: current.analysisId,
+          jobId: current.jobId,
           status: data.status,
           result: data.result,
           error: data.error,
@@ -120,9 +121,9 @@ export function DashboardWatchProvider({ children }: { children: React.ReactNode
         setLastDone(done)
         setToast(
           data.status === "succeeded"
-            ? { id: `${watch.jobId}-ok`, tone: "ok", title: "Dashboard pronto" }
+            ? { id: `${current.jobId}-ok`, tone: "ok", title: "Dashboard pronto" }
             : {
-                id: `${watch.jobId}-err`,
+                id: `${current.jobId}-err`,
                 tone: "err",
                 title: "Não foi possível montar o dashboard",
                 body: data.error || "Tente de novo.",
